@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+  <h1>Board List Page</h1>
+  <div>
+    <table class="table table-dark table-striped">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">title</th>
+          <th scope="col">writer</th>
+          <th scope="col">regDate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="bvo:${list}">
+          <th scope="col">[[${bvo.bno}]]</th>
+          <th scope="col">[[${bvo.title}]]</th>
+          <th scope="col">[[${bvo.writer}]]</th>
+          <th scope="col">[[${bvo.regDate}]]</th>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>
