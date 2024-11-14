@@ -4,10 +4,35 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}">
 
-<div layout:fragment="content">
+<div layout:fragment="content" class="container-md">
   <h1>Board List Page</h1>
+  <hr>
+  <!--/* search line */-->
+  <form action="/board/list" >
+    <select class="form-select" name="type" id="inputGroupSelect01">
+      <option th:selected="${ph.pgvo.type == null? true : false}" >검색 옵션 선택</option>
+      <option th:value="t" th:selected="${ph.pgvo.type == 't'? true: false}">제목</option>
+      <option th:value="w" th:selected="${ph.pgvo.type == 'w'? true: false}">글쓴이</option>
+      <option th:value="c" th:selected="${ph.pgvo.type == 'c'? true: false}">내용</option>
+      <option th:value="tw" th:selected="${ph.pgvo.type == 'tw'? true: false}">제목+글쓴이</option>
+      <option th:value="wc" th:selected="${ph.pgvo.type == 'wc'? true: false}">내용+글쓴이</option>
+      <option th:value="tc" th:selected="${ph.pgvo.type == 'tc'? true: false}">제목+내용</option>
+      <option th:value="twc" th:selected="${ph.pgvo.type == 'twc'? true: false}">전체</option>
+    </select>
+    <input class="form-control me-2" name="keyword" type="search" placeholder="검색어를 입력해 주세요." th:value="${ph.pgvo.keyword }" aria-label="Search">
+    <input type="hidden" name="pageNo" th:value="1">
+    <input type="hidden" name="qty" th:value="${ph.pgvo.qty}">
+    <!--  <button class="btn btn-outline-success" type="submit">Search</button> -->
+    <button type="submit" class="btn btn-success position-relative">
+      Search
+      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+		    [[${ph.totalCount}]]
+      </span>
+    </button>
+  </form>
+
   <div>
-    <table class="table table-dark table-striped">
+    <table class="table table-success table-striped">
       <thead>
         <tr>
           <th scope="col">#</th>
@@ -18,13 +43,35 @@
       </thead>
       <tbody>
         <tr th:each="bvo:${list}">
-          <th scope="col">[[${bvo.bno}]]</th>
-          <th scope="col">[[${bvo.title}]]</th>
+          <th scope="col">[[${bvo.bno}]]</a></th>
+          <th scope="col">
+            <a th:href="@{detail(bno=${bvo.bno})}">[[${bvo.title}]]</a>
+          </th>
           <th scope="col">[[${bvo.writer}]]</th>
           <th scope="col">[[${bvo.regDate}]]</th>
         </tr>
       </tbody>
     </table>
+    <!--/* ${ }  => jsp EL 방식 => 타임리프 th: 사용 */-->
+    <!-- /* th:classappend : 동적으로 클래스 추가 */ -->
+    <!--/* 페이지네이션 라인 */-->
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" th:classappend="${ph.prev eq false ? 'disabled' : ''}">
+          <a class="page-link" th:href="@{/board/list(pageNo=${ph.startPage-1}, qty=10, type=${ph.pgvo.type}, keyword=${ph.pgvo.keyword})}">이전</a>
+        </li>
+
+        <!--/* ${#numbers.sequence(from,to)} */-->
+        <th:block th:each="i:${#numbers.sequence(ph.startPage, ph.endPage)}">
+          <li class="page-item" th:classappend="${ph.pgvo.pageNo eq i ? 'active' : ''}">
+            <a class="page-link" th:href="@{/board/list(pageNo=${i}, qty=10, type=${ph.pgvo.type}, keyword=${ph.pgvo.keyword})}">[[${i}]]</a></li>
+        </th:block>
+
+        <li class="page-item" th:classappend="${ph.next eq false ? 'disabled' : ''}">
+          <a class="page-link" th:href="@{/board/list(pageNo=${ph.endPage+1}, qty=10, type=${ph.pgvo.type}, keyword=${ph.pgvo.keyword})}">다음</a>
+        </li>
+      </ul>
+    </nav>
 
   </div>
 </div>
