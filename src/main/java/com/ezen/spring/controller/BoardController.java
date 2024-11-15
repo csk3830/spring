@@ -1,19 +1,22 @@
 package com.ezen.spring.controller;
 
+import com.ezen.spring.domain.BoardDTO;
 import com.ezen.spring.domain.BoardVO;
+import com.ezen.spring.domain.FileVO;
 import com.ezen.spring.domain.PagingVO;
+import com.ezen.spring.handler.FileHandler;
+import com.ezen.spring.handler.FileRemoveHandler;
 import com.ezen.spring.handler.PagingHandler;
 import com.ezen.spring.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequestMapping("/board/*")
@@ -22,6 +25,7 @@ import java.util.List;
 @Controller
 public class BoardController {
     private final BoardService bsv;
+    private final FileHandler fh;
 
     @GetMapping("/register")
     public String register() {
@@ -29,9 +33,14 @@ public class BoardController {
     }
 
     @PostMapping("/register")
-    public String register(BoardVO boardVO) {
+    public String register(BoardVO boardVO, @RequestParam(name="files", required = false) MultipartFile[] files) {
         log.info(">>>> boardVO >> {}", boardVO);
-        int isOk = bsv.register(boardVO);
+        List<FileVO> flist = null;
+        if(files[0].getSize() > 0 && files != null){
+            flist = fh.uploadFile(files);
+            log.info(">>>> flist >> {}", flist);
+        }
+        int isOk = bsv.register(new BoardDTO(boardVO, flist));
         return "redirect:/board/list";
     }
 
@@ -48,15 +57,17 @@ public class BoardController {
 
     @GetMapping("/detail")
     public String detail(@RequestParam("bno") long bno, Model model) {
-        BoardVO bvo = bsv.getDetail(bno);
-        model.addAttribute("bvo", bvo);
+        model.addAttribute("bdto", bsv.getDetail(bno));
         return "/board/detail";
     }
 
     @PostMapping("/modify")
-    public String modify(BoardVO bvo, RedirectAttributes redirectAttributes) {
-        log.info(">>>> bvo >> {}", bvo);
-        int isOk = bsv.update(bvo);
+    public String modify(BoardVO bvo, RedirectAttributes redirectAttributes, @RequestParam(value = "files", required = false)MultipartFile[] files) {
+        List<FileVO> flist = null;
+        if(files != null && files[0].getSize()>0){
+            flist = fh.uploadFile(files);
+        }
+        int isOk = bsv.update(new BoardDTO(bvo, flist));
         redirectAttributes.addAttribute("bno", bvo.getBno());
         return "redirect:/board/detail";
     }
@@ -67,4 +78,16 @@ public class BoardController {
         log.info(">>>> delete > {}", isOk>0? "OK":"Fail");
         return "redirect:/board/list";
     }
+
+    @ResponseBody
+    @DeleteMapping("/file/{uuid}")
+    public String removeFile(@PathVariable("uuid") String uuid) {
+        FileVO fvo = bsv.getFile(uuid);
+        int isOk = bsv.removeFile(uuid);
+        //파일 삭제
+        FileRemoveHandler fr = new FileRemoveHandler();
+        boolean isDel = fr.deleteFile(fvo);
+        return (isOk > 0 && isDel) ? "1" : "0";
+    }
+
 }

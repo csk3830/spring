@@ -5,8 +5,9 @@
       layout:decorate="~{layout/layout}">
 
 <div layout:fragment="content" class="container-md">
-  <form action="/board/modify" method="post" id="modForm">
+  <form action="/board/modify" method="post" id="modForm" enctype="multipart/form-data">
   <hr>
+  <th:block th:with="bvo=${bdto.bvo}">
     <input type="hidden" id="n" name="bno" th:value="${bvo.bno}">
     <div class="mb-3">
       <label for="regDate" class="form-label">작성일시 : </label>
@@ -24,6 +25,37 @@
       <label for="content" class="form-label">content</label>
       <textarea class="form-control" id="content" rows="3" name="content" readonly>[[${bvo.content }]]</textarea>
     </div>
+    <!--/* file print line */-->
+    <div class="mb-3">
+      <ul class="list-group list-group-flush">
+        <li th:each="fvo:${bdto.flist}" class="list-group-item">
+          <div th:if="${fvo.fileType > 0}" class="ms-2 me-auto">
+            <img th:src="@{|/upload/${fvo.saveDir}/${fvo.uuid}_${fvo.fileName}|}" alt="img" />
+          </div>
+          <div th:unless="${fvo.fileType > 0}" class="ms-2 me-auto">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+              <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+              <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+            </svg>
+          </div>
+          <div class="ms-2 me-auto">
+            <div class="fw-bold">[[${fvo.fileName}]]</div>
+            [[${fvo.regDate}]]
+          </div>
+          <span class="badge text-bg-success rounded-pill">[[${fvo.fileSize}]]Bytes</span>
+          <button type="button" th:data-uuid="${fvo.uuid}" class="btn btn-outline-danger file-x" style="display: none;">X</button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- /* file 추가 라인 */ -->
+    <div class="mb-3">
+      <label for="file" class="form-label"></label>
+      <input type="file" class="form-control" name="files" id="file" multiple style="display:none;">
+    </div>
+    <button type="button" id="trigger" class="btn btn-outline-secondary" style="display: none;">파일 선택</button>
+    <!-- /* file 출력 라인 */ -->
+    <div class="input-group mb-3" id="fileZone"></div>
 
   <button type="button" id="listBtn" class="btn btn-outline-primary">목록</button>
   <!-- detail에서 modify 상태로 변환하기 위한 버튼 -->
@@ -31,8 +63,8 @@
     <a th:href="@{/board/delete(bno=${bvo.bno})}">
       <button type="button" id="delBtn" class="btn btn-outline-danger">삭제</button>
     </a>
+  </th:block>
   </form>
-
   <script th:src="@{/js/boardDetail.js}"></script>
-
+  <script th:src="@{/js/boardRegister.js}"></script>
 </div>

@@ -10,6 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BoardDTO {
-    private BoardDTO bvo;
+    private BoardVO bvo;
     private List<FileVO> flist;
 }
