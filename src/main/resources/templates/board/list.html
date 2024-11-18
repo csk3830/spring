@@ -8,8 +8,8 @@
   <h1>Board List Page</h1>
   <hr>
   <!--/* search line */-->
-  <form action="/board/list" >
-    <select class="form-select" name="type" id="inputGroupSelect01">
+  <form action="/board/list" class="d-flex mb-3">
+    <select class="form-select" name="type" id="inputGroupSelect01" style="width: 300px; margin-right: 10px;">
       <option th:selected="${ph.pgvo.type == null? true : false}" >검색 옵션 선택</option>
       <option th:value="t" th:selected="${ph.pgvo.type == 't'? true: false}">제목</option>
       <option th:value="w" th:selected="${ph.pgvo.type == 'w'? true: false}">글쓴이</option>
