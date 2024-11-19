@@ -1,6 +1,6 @@
 console.log("boardComment.js in");
 console.log(bnoVal);
-
+console.log(nickName);
 document.getElementById('cmtAddBtn').addEventListener('click', ()=>{
     const cmtWriter = document.getElementById('cmtWriter');
     const cmtText = document.getElementById('cmtText');
@@ -37,8 +37,10 @@ function spreadCommentList(bnoVal, page=1){
                 li += `${cvo.content}`;
                 li += `</div>`;
                 li += `<span class="badge text-bg-primary rounded-pill">${cvo.regDate}</span>`;
-                li += `<button type="button" data-cno=${cvo.cno} class="btn btn-outline-warning btn-sm mod" data-bs-toggle="modal" data-bs-target="#myModal">수정</button>`;
-                li += `<button type="button" data-cno=${cvo.cno} class="btn btn-outline-danger btn-sm del">삭제</button>`;
+                if(nickName === cvo.writer){
+                    li += `<button type="button" data-cno=${cvo.cno} class="btn btn-outline-warning btn-sm mod" data-bs-toggle="modal" data-bs-target="#myModal">수정</button>`;
+                    li += `<button type="button" data-cno=${cvo.cno} class="btn btn-outline-danger btn-sm del">삭제</button>`;
+                }
                 li += `</li>`;
                 ul.innerHTML += li;
             }

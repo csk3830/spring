@@ -9,7 +9,7 @@
 
     <insert id="insertAuthInit">
         insert into auth(email, auth)
-        values(#{email}, #{auth})
+        values(#{email}, 'ROLE_USER')
     </insert>
 
     <select id="selectEmail" resultType="com.ezen.spring.domain.UserVO">
@@ -19,6 +19,32 @@
     <select id="selectAuths" resultType="com.ezen.spring.domain.AuthVO">
         select * from auth where email = #{email}
     </select>
+    <select id="getList" resultType="com.ezen.spring.domain.UserVO">
+        select * from user
+    </select>
+
+    <update id="updateNoPwd">
+        update user set nick_name = #{nickName}
+        where email = #{email}
+    </update>
+
+    <update id="update">
+        update user set pwd = #{pwd}, nick_name = #{nickName}
+        where email = #{email}
+    </update>
+
+    <delete id="remove">
+        delete from user where email = #{email}
+    </delete>
+
+    <delete id ="removeAuth">
+        delete from auth where email = #{email}
+    </delete>
+
+    <update id="lastUpdate">
+        update user set last_login = now()
+        where email = #{email}
+    </update>
 
 </mapper>
 

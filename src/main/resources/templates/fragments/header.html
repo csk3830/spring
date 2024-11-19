@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <!--/* th:fragment="이름" : 레이아웃에서 사용할 조각 */-->
 <div th:fragment="header">
@@ -14,18 +14,36 @@
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="/">Home</a>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" sec:authorize="isAuthenticated()">
             <a class="nav-link" href="/board/register">글쓰기</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/board/list">글목록</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/user/signup">회원가입</a>
+          <th:block sec:authorize="isAnonymous()">
+            <li class="nav-item">
+              <a class="nav-link" href="/user/signup">회원가입</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/user/login">로그인</a>
+            </li>
+          </th:block>
+          <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
+            <a class="nav-link" href="/user/list">회원리스트</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/user/login">로그인</a>
+
+          <!--/* 직접 객체를 찍어볼 수 있다. */-->
+<!--/*          <li class="nav-item" sec:authorize="isAuthenticated()" th:text="${#authentication.getPrincipal().userVO}"></li>*/-->
+
+          <li class="nav-item" sec:authorize="isAuthenticated()">
+            <a class="nav-link" href="/user/modify" th:with="auth=${#authentication.getPrincipal()}">
+              ([[${auth.userVO.nickName}]]) 회원정보수정
+            </a>
           </li>
+          <li class="nav-item" sec:authorize="isAuthenticated()">
+            <a class="nav-link" href="/user/last">로그아웃</a>
+          </li>
+
         </ul>
 
       </div>

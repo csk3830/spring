@@ -15,7 +15,7 @@
     </div>
     <div class="mb-3">
       <label for="w" class="form-label">Writer</label>
-      <input type="text" class="form-control" name="writer" id="w" placeholder="작성자를 입력해 주세요">
+      <input type="text" class="form-control" name="writer" id="w" readonly th:value="${#authentication.getPrincipal().userVO.nickName}">
     </div>
     <div class="mb-3">
       <label for="c" class="form-label">Example textarea</label>

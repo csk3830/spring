@@ -43,9 +43,9 @@
       </thead>
       <tbody>
         <tr th:each="bvo:${list}">
-          <th scope="col">[[${bvo.bno}]]</a></th>
+          <th scope="col">[[${bvo.bno}]]</th>
           <th scope="col">
-            <a th:href="@{detail(bno=${bvo.bno})}">[[${bvo.title}]]</a>
+            <a th:href="@{detail(bno=${bvo.bno})}" style="color: darkgreen;">[[${bvo.title}]]</a>
           </th>
           <th scope="col">[[${bvo.writer}]]</th>
           <th scope="col">[[${bvo.regDate}]]</th>
@@ -57,7 +57,7 @@
     <!--/* 페이지네이션 라인 */-->
     <nav aria-label="Page navigation example">
       <ul class="pagination justify-content-center">
-        <li class="page-item" th:classappend="${ph.prev eq false ? 'disabled' : ''}">
+        <li class="page-item"  th:classappend="${ph.prev eq false ? 'disabled' : ''}">
           <a class="page-link" th:href="@{/board/list(pageNo=${ph.startPage-1}, qty=10, type=${ph.pgvo.type}, keyword=${ph.pgvo.keyword})}">이전</a>
         </li>
 
