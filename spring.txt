@@ -1,0 +1,64 @@
+pagingVO (DB 처리에 필요한 값을 전달하기 위한 객체)
+pagingHandler (화면 처리에 필요한 값을 전달하기 위한 객체)
+
+PagingVO =>
+select * from board
+limit 번지, 개수
+번지 : 0번지부터 0 => 현재 페이지 번호와  한 페이지의 개수에 따라 계산되어야 함.
+개수 : 한페이지에 출력할 리스트의 개수 => 10
+
+limit 0,10	 / limit 10, 10 / limit 20, 10
+1  2  3  4  5 => 하단 페이지 번호
+번지를 구하는 공식 : (페이지번호-1) * 개수
+----------------------------------------
+pagingHandler
+
+- 화면에서 보이는 페이지네이션의 시작값 : startPage
+- 화면에서 보이는 페이지네이션의 끝값 : endPage
+- 페이지네이션의 숫자 개수 10
+- 정말 마지막 페이지 값 : realEndPage 
+- prev, next의 존재여부 : prev, next
+- 전체 리스트 개수 : totalCount => DB에서 가져와야 하는 값 (파라미터로 전달)
+- pgvo 값 : 파라미터로 전달
+
+---------------------------------------
+file DB 구성
+create table file(
+uuid varchar(256) not null, 
+save_dir varchar(256) not null,
+file_name varchar(200) not null,
+file_type tinyint(1) default 0,
+bno bigint not null,
+file_size bigint,
+reg_date datetime default now(), 
+primary key(uuid)
+);
+---------------------------------------
+라이브러리 추가
+tika-core / tika-parsers 2.4.1
+thumbnailator 0.4.17
+---------------------------------------
+create table comment (
+cno bigint auto_increment,
+bno bigint not null,
+writer varchar(200),
+content text,
+reg_date datetime default now(),
+primary key(cno)
+);
+---------------------------------------
+create table user (
+email varchar(200),
+pwd varchar(256),
+nick_name varchar(200),
+reg_date datetime default now(),
+last_login datetime default now(),
+primary key(email)
+);
+create table auth(
+id int auto_increment,
+email varchar(200),
+auth varchar(50),
+primary key(id),
+foreign key(email) references user(email)
+);
